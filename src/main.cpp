@@ -42,6 +42,8 @@ int led4=32;
 int inyeccion = 51;
 int expulsion = 53;
 
+int tiempo;
+
 byte sw=49;
 
 Enose enose1(MQ_PIN, RL_MQ);
@@ -65,6 +67,8 @@ void setup()
   digitalWrite(led4, LOW);
   digitalWrite(47, LOW);
 
+  tiempo=0;
+
   enose1.manualCalibration(Ro);
   while (!digitalRead(sw))
   {
@@ -81,70 +85,72 @@ void ledPannel(int ld1, int ld2, int ld3, int ld4){
 
 void loop()
 {
-  while (!digitalRead(sw))
-  {
-    digitalWrite(expulsion, 0);
-    digitalWrite(inyeccion, 0);
-    ledPannel(0,0,0,0);
-    contador = 0;
-    calibracion = true;
-  }
-  while (contador < 301 && digitalRead(sw))     //301
-  {
-    contador++;
-
-    digitalWrite(expulsion, 1);
-    digitalWrite(inyeccion, 0);
-    ledPannel(1,0,0,0);
-    //enose1.ppmExcelWrite();
-    //enose1.ppmSerialPlot();
-    delay(1000);
-  }
-  while (contador > 300 && contador < 601 && digitalRead(sw)) //300   601
-  {
-    contador++;
-    digitalWrite(expulsion, 0);
-    digitalWrite(inyeccion, 1);
-    ledPannel(0,1,0,0);
-    enose1.ppmExcelWrite();
-    //enose1.ppmSerialPlot();
-    delay(1000);
-  }
-  if (contador == 601)   //601
-  {
-    while (digitalRead(sw))
-    {
-      digitalWrite(expulsion, 0);
-      digitalWrite(inyeccion, 0);
-      ledPannel(0,0,1,0);
-      //enose1.ppmExcelWrite();
-      //enose1.ppmSerialPlot();
-      delay(1000);
-    }
-    while (!digitalRead(sw))
-    {
-    }
-  }
-  while (contador > 600 && contador < 901 && digitalRead(sw))   //600   901
-  {
-    contador++;
-    digitalWrite(expulsion, 1);
-    digitalWrite(inyeccion, 1);
-    ledPannel(0,0,0,1);
-    //enose1.ppmExcelWrite();
-    //enose1.ppmSerialPlot();
-    delay(1000);
-  }
-  while (contador > 900 && contador < 1201 && digitalRead(sw))   //600   901
-  {
-    contador++;
-    digitalWrite(expulsion, 0);
-    digitalWrite(inyeccion, 0);
-    ledPannel(1,1,1,1);
-    delay(1000);
-    ledPannel(0,0,0,0);
-  }
-  contador = 0;
+  tiempo=millis();
+  Serial.println(tiempo);
+  //while (!digitalRead(sw))
+  //{
+  //  digitalWrite(expulsion, 0);
+  //  digitalWrite(inyeccion, 0);
+  //  ledPannel(0,0,0,0);
+  //  contador = 0;
+  //  calibracion = true;
+  //}
+  //while (contador < 301 && digitalRead(sw))     //301
+  //{
+  //  contador++;
+//
+  //  digitalWrite(expulsion, 1);
+  //  digitalWrite(inyeccion, 0);
+  //  ledPannel(1,0,0,0);
+  //  //enose1.ppmExcelWrite();
+  //  //enose1.ppmSerialPlot();
+  //  delay(1000);
+  //}
+  //while (contador > 300 && contador < 601 && digitalRead(sw)) //300   601
+  //{
+  //  contador++;
+  //  digitalWrite(expulsion, 0);
+  //  digitalWrite(inyeccion, 1);
+  //  ledPannel(0,1,0,0);
+  //  enose1.ppmExcelWrite();
+  //  //enose1.ppmSerialPlot();
+  //  delay(1000);
+  //}
+  //if (contador == 601)   //601
+  //{
+  //  while (digitalRead(sw))
+  //  {
+  //    digitalWrite(expulsion, 0);
+  //    digitalWrite(inyeccion, 0);
+  //    ledPannel(0,0,1,0);
+  //    //enose1.ppmExcelWrite();
+  //    //enose1.ppmSerialPlot();
+  //    delay(1000);
+  //  }
+  //  while (!digitalRead(sw))
+  //  {
+  //  }
+  //}
+  //while (contador > 600 && contador < 901 && digitalRead(sw))   //600   901
+  //{
+  //  contador++;
+  //  digitalWrite(expulsion, 1);
+  //  digitalWrite(inyeccion, 1);
+  //  ledPannel(0,0,0,1);
+  //  //enose1.ppmExcelWrite();
+  //  //enose1.ppmSerialPlot();
+  //  delay(1000);
+  //}
+  //while (contador > 900 && contador < 1201 && digitalRead(sw))   //600   901
+  //{
+  //  contador++;
+  //  digitalWrite(expulsion, 0);
+  //  digitalWrite(inyeccion, 0);
+  //  ledPannel(1,1,1,1);
+  //  delay(1000);
+  //  ledPannel(0,0,0,0);
+  //}
+  //contador = 0;
 }
 
 // Razon_medicion_filtrada[i] = (Razon_medicion_MQ[i]*alpha_MQ)+((1-alpha_MQ)*Razon_medicion_MQ[i]);

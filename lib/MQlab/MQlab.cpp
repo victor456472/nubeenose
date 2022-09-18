@@ -198,3 +198,7 @@ void Enose::ppmExcelWrite(){
     Serial.println(ppm[9]);
 
 }
+
+void Enose::HMIcomunication(){
+      
+}

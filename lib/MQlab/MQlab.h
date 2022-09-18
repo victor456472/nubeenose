@@ -63,6 +63,7 @@ class Enose {
         void ppmExcelWrite();
         //grafica en el Serial plotter los datos leidos por la Enose
         void ppmSerialPlot();
+        void HMIcomunication();
 };
 
 
