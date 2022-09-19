@@ -144,6 +144,7 @@ void loop()
     if (contador<=range_time){
       limpieza_parcial();
       ledPannel(1,0,0,0);
+      enose1.HMIcomunication();
     }
 
     if (contador>=range_time+1 && contador<=range_time*2)
