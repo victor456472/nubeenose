@@ -121,17 +121,17 @@ void loop()
     ledPannel(0,0,0,0);
     door1=true;
     door0=false;
-    door3=true;
+    //door3=true;
     tiempo3=0;
     contador=0;
     tiempo=millis();
     activar_espera=false;
   }
 
-  if(door3){
-    enose1.excelInit();
-    door3=false;
-  }
+  //if(door3){
+  //  enose1.excelInit();
+  //  door3=false;
+  //}
 
   tiempo2=millis()-tiempo;
 
@@ -143,15 +143,14 @@ void loop()
     if (contador<=range_time){
       limpieza_parcial();
       ledPannel(1,0,0,0);
-      Serial.println(contador);
     }
 
     if (contador>=range_time+1 && contador<=range_time*2)
     {
       inyeccion_gases();
       ledPannel(0,1,0,0);
-      Serial.println(contador);
-      enose1.ppmExcelWrite();
+      //enose1.ppmExcelWrite();
+      enose1.HMIcomunication(); 
     }
     if (contador>=((range_time*2)+1)){
       activar_espera=true;
@@ -161,7 +160,6 @@ void loop()
       tiempo2 =millis()-tiempo;
       if (tiempo2-tiempo3 >= 1000){
         tiempo3=tiempo2;
-        Serial.println(contador);
       }
       ledPannel(0,0,1,0);
       detener_bombas();
@@ -179,7 +177,6 @@ void loop()
     if (contador>=((range_time*2)+1) && contador<=range_time*3){
       ledPannel(0,0,0,1);
       limpieza_completa();
-      Serial.println(contador);
       if(door2){
         delay(100);
       }
@@ -188,7 +185,6 @@ void loop()
     if (contador>=((range_time*3)+1)){
       ledPannel(1,1,1,1);
       detener_bombas();
-      Serial.println(contador);
     }
   }
 }
