@@ -31,6 +31,7 @@ float Matriz_b[] = {-1.481, -1.534, -4.257, -3.378, -2.507, -1.481, -1.534, -4.2
 // Filtrado de datos de datos
 #define alpha_MQ 0.01
 int contador = 0;
+int contador2 = 0;
 bool calibracion = true;
 int prueba;
 
@@ -42,7 +43,18 @@ int led4=32;
 int inyeccion = 51;
 int expulsion = 53;
 
-int tiempo;
+
+bool activar_espera=false;
+bool door0=false;
+bool door1=true;
+bool door2=true;
+bool door3=true;
+
+unsigned long tiempo;
+unsigned long tiempo2;
+unsigned long tiempo3;
+
+int range_time = 300;
 
 byte sw=49;
 
@@ -68,12 +80,13 @@ void setup()
   digitalWrite(47, LOW);
 
   tiempo=0;
+  tiempo2=0;
+  tiempo3=0;
 
   enose1.manualCalibration(Ro);
-  while (!digitalRead(sw))
-  {
-  }
-  enose1.excelInit();
+  //while (!digitalRead(sw))
+  //{
+  //}
 }
 
 void ledPannel(int ld1, int ld2, int ld3, int ld4){
@@ -83,74 +96,104 @@ void ledPannel(int ld1, int ld2, int ld3, int ld4){
   digitalWrite(led4, ld4);
 }
 
-void loop()
-{
-  tiempo=millis();
-  Serial.println(tiempo);
-  //while (!digitalRead(sw))
-  //{
-  //  digitalWrite(expulsion, 0);
-  //  digitalWrite(inyeccion, 0);
-  //  ledPannel(0,0,0,0);
-  //  contador = 0;
-  //  calibracion = true;
-  //}
-  //while (contador < 301 && digitalRead(sw))     //301
-  //{
-  //  contador++;
-//
-  //  digitalWrite(expulsion, 1);
-  //  digitalWrite(inyeccion, 0);
-  //  ledPannel(1,0,0,0);
-  //  //enose1.ppmExcelWrite();
-  //  //enose1.ppmSerialPlot();
-  //  delay(1000);
-  //}
-  //while (contador > 300 && contador < 601 && digitalRead(sw)) //300   601
-  //{
-  //  contador++;
-  //  digitalWrite(expulsion, 0);
-  //  digitalWrite(inyeccion, 1);
-  //  ledPannel(0,1,0,0);
-  //  enose1.ppmExcelWrite();
-  //  //enose1.ppmSerialPlot();
-  //  delay(1000);
-  //}
-  //if (contador == 601)   //601
-  //{
-  //  while (digitalRead(sw))
-  //  {
-  //    digitalWrite(expulsion, 0);
-  //    digitalWrite(inyeccion, 0);
-  //    ledPannel(0,0,1,0);
-  //    //enose1.ppmExcelWrite();
-  //    //enose1.ppmSerialPlot();
-  //    delay(1000);
-  //  }
-  //  while (!digitalRead(sw))
-  //  {
-  //  }
-  //}
-  //while (contador > 600 && contador < 901 && digitalRead(sw))   //600   901
-  //{
-  //  contador++;
-  //  digitalWrite(expulsion, 1);
-  //  digitalWrite(inyeccion, 1);
-  //  ledPannel(0,0,0,1);
-  //  //enose1.ppmExcelWrite();
-  //  //enose1.ppmSerialPlot();
-  //  delay(1000);
-  //}
-  //while (contador > 900 && contador < 1201 && digitalRead(sw))   //600   901
-  //{
-  //  contador++;
-  //  digitalWrite(expulsion, 0);
-  //  digitalWrite(inyeccion, 0);
-  //  ledPannel(1,1,1,1);
-  //  delay(1000);
-  //  ledPannel(0,0,0,0);
-  //}
-  //contador = 0;
+void limpieza_parcial(){
+  digitalWrite(expulsion, 1);
+  digitalWrite(inyeccion, 0);
 }
 
-// Razon_medicion_filtrada[i] = (Razon_medicion_MQ[i]*alpha_MQ)+((1-alpha_MQ)*Razon_medicion_MQ[i]);
+void inyeccion_gases(){
+  digitalWrite(expulsion, 0);
+  digitalWrite(inyeccion, 1);
+}
+
+void detener_bombas(){
+  digitalWrite(expulsion, 0);
+  digitalWrite(inyeccion, 0);
+}
+
+void limpieza_completa(){
+  digitalWrite(expulsion, 1);
+  digitalWrite(inyeccion, 1);
+}
+
+void loop()
+{
+  while (!digitalRead(sw))
+  {
+    detener_bombas();
+    ledPannel(0,0,0,0);
+    door1=true;
+    door0=false;
+    door3=true;
+    tiempo3=0;
+    contador=0;
+    tiempo=millis();
+    activar_espera=false;
+  }
+
+  if(door3){
+    enose1.excelInit();
+    door3=false;
+  }
+
+  tiempo2=millis()-tiempo;
+
+  if (tiempo2-tiempo3 >= 1000){
+
+    tiempo3=tiempo2;
+    contador++;
+
+    if (contador<=range_time){
+      limpieza_parcial();
+      ledPannel(1,0,0,0);
+      Serial.println(contador);
+    }
+
+    if (contador>=range_time+1 && contador<=range_time*2)
+    {
+      inyeccion_gases();
+      ledPannel(0,1,0,0);
+      Serial.println(contador);
+      enose1.ppmExcelWrite();
+    }
+    if (contador>=((range_time*2)+1)){
+      activar_espera=true;
+    }
+
+    while(activar_espera && door1){
+      tiempo2 =millis()-tiempo;
+      if (tiempo2-tiempo3 >= 1000){
+        tiempo3=tiempo2;
+        Serial.println(contador);
+      }
+      ledPannel(0,0,1,0);
+      detener_bombas();
+      if (!digitalRead(sw)){
+        door0=true;
+      }
+      if (door0){
+        if (digitalRead(sw)){
+          activar_espera=false;
+          door1=false;
+        }
+      }
+    }
+
+    if (contador>=((range_time*2)+1) && contador<=range_time*3){
+      ledPannel(0,0,0,1);
+      limpieza_completa();
+      Serial.println(contador);
+      if(door2){
+        delay(100);
+      }
+    }
+
+    if (contador>=((range_time*3)+1)){
+      ledPannel(1,1,1,1);
+      detener_bombas();
+      Serial.println(contador);
+    }
+  }
+}
+
+
