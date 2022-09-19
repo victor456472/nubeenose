@@ -84,9 +84,6 @@ void setup()
   tiempo3=0;
 
   enose1.manualCalibration(Ro);
-  //while (!digitalRead(sw))
-  //{
-  //}
 }
 
 void ledPannel(int ld1, int ld2, int ld3, int ld4){
