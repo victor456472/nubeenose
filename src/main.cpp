@@ -124,6 +124,7 @@ void loop()
     ledPannel(0,0,0,0);
     door1=true;
     door0=false;
+    door2=true;
     door3=true;
     tiempo3=0;
     contador=0;
@@ -185,6 +186,7 @@ void loop()
       Serial.println(contador);
       if(door2){
         delay(100);
+        door2=false;
       }
     }
 
