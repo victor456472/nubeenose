@@ -49,6 +49,8 @@ bool door0=false;
 bool door1=true;
 bool door2=true;
 bool door3=true;
+bool door4=true;
+bool door5=true;
 
 unsigned long tiempo;
 unsigned long tiempo2;
@@ -122,6 +124,8 @@ void loop()
     door1=true;
     door0=false;
     door2=true;
+    door4=true;
+    door5=true;
     //door3=true;
     tiempo3=0;
     contador=0;
@@ -144,7 +148,7 @@ void loop()
     if (contador<=range_time){
       limpieza_parcial();
       ledPannel(1,0,0,0);
-      enose1.HMIcomunication();
+      //enose1.HMIcomunication();
     }
 
     if (contador>=range_time+1 && contador<=range_time*2)
@@ -159,6 +163,10 @@ void loop()
     }
 
     while(activar_espera && door1){
+      if(door4){
+        enose1.HMIcomunication(true); //la sobrecarga permite indicar el final de la recoleccion de datos
+        door4=false;
+      }
       tiempo2 =millis()-tiempo;
       if (tiempo2-tiempo3 >= 1000){
         tiempo3=tiempo2;
@@ -189,6 +197,13 @@ void loop()
       ledPannel(1,1,1,1);
       detener_bombas();
     }
+  }
+  if(door5){
+    delay(100);
+    door5=false;
+  }
+  if(!digitalRead(sw) && door4!=false){
+    enose1.HMIcomunication(true); //la sobrecarga permite indicar el final de la recoleccion de datos
   }
 }
 

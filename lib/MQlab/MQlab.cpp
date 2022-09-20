@@ -201,5 +201,24 @@ void Enose::ppmExcelWrite(){
 
 void Enose::HMIcomunication(){
     ppmGet();
-    Serial.println(ppm[0]);
+    for(int i=0; i<=9; i++){
+        Serial.print(ppm[i]);
+        Serial.print(",");
+    }
+    Serial.println(0);
+}
+void Enose::HMIcomunication(bool finalizar_recoleccion){
+    if(finalizar_recoleccion){
+        for (int i = 0; i <= 9; i++){
+            Serial.print("0,");
+        }
+        Serial.println(1);
+    }else{
+        ppmGet();
+        for(int i=0; i<=9; i++){
+            Serial.print(ppm[i]);
+            Serial.print(",");
+        }
+        Serial.println(0);
+    }
 }

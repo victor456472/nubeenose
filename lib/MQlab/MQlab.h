@@ -65,6 +65,7 @@ class Enose {
         void ppmSerialPlot();
         //envia los datos por el puerto serial al HMI
         void HMIcomunication();
+        void HMIcomunication(bool finalizar_recoleccion);
 };
 
 
