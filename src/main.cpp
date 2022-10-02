@@ -8,7 +8,8 @@ float MM_MQ[10];
 float Razon_medicion_filtrada[10];
 float MQ_L[10];
 float f[] = {59.099, 25.1, 6.44, 3.635, 9.88, 59.099, 25.1, 6.44, 3.635, 9.88};
-float Ro[] = {40, 109, 784, 547, 177, 17.4, 49.28, 726.5, 627, 141};
+//float Ro[] = {40, 109, 784, 547, 177, 17.4, 49.28, 726.5, 627, 141};
+float Ro[] = {60, 109, 784, 547, 177, 17.4, 49.28, 726.5, 627, 141};
 float *Ppm;; // ojo usar este tipo de variable para recibir arreglos de funciones
 
 // MQ3 - ALCOHOL
@@ -51,12 +52,14 @@ bool door2=true;
 bool door3=true;
 bool door4=true;
 bool door5=true;
+bool door6=true;
+bool door7=true;
 
 unsigned long tiempo;
 unsigned long tiempo2;
 unsigned long tiempo3;
 
-int range_time = 300;
+int range_time = 60*10;
 
 byte sw=49;
 
@@ -119,6 +122,7 @@ void loop()
 {
   while (!digitalRead(sw))
   {
+    enose1.rs_filter_reseter();
     detener_bombas();
     ledPannel(0,0,0,0);
     door1=true;
@@ -126,17 +130,17 @@ void loop()
     door2=true;
     door4=true;
     door5=true;
-    //door3=true;
+    door6=true;
+    door7=true;
     tiempo3=0;
     contador=0;
     tiempo=millis();
     activar_espera=false;
   }
-
-  //if(door3){
-  //  enose1.excelInit();
-  //  door3=false;
-  //}
+  
+  if (contador>=range_time+1 && contador<=range_time*2){
+    enose1.pascalFilter();
+  }
 
   tiempo2=millis()-tiempo;
 
@@ -153,6 +157,10 @@ void loop()
 
     if (contador>=range_time+1 && contador<=range_time*2)
     {
+      if(door6){
+        enose1.pascalFilter();
+        door6=false;
+      }
       inyeccion_gases();
       ledPannel(0,1,0,0);
       //enose1.ppmExcelWrite();
@@ -174,6 +182,10 @@ void loop()
       ledPannel(0,0,1,0);
       detener_bombas();
       if (!digitalRead(sw)){
+        if(door7){
+          delay(500);
+          door7=false;
+        }
         door0=true;
       }
       if (door0){
@@ -198,13 +210,14 @@ void loop()
       detener_bombas();
     }
   }
+
   if(door5){
-    delay(100);
+    delay(600);
     door5=false;
   }
-  if(!digitalRead(sw) && door4!=false){
-    enose1.HMIcomunication(true); //la sobrecarga permite indicar el final de la recoleccion de datos
-  }
+  //if(!digitalRead(sw) && door4!=false){
+  //  enose1.HMIcomunication(true); //la sobrecarga permite indicar el final de la recoleccion de datos
+  //}
 }
 
 

@@ -100,9 +100,37 @@ void Enose::manualCalibration(float Ro[10]){
 void Enose::rsGet(){
     for (int i = 0; i < 10; i++)
     {
-        RS[i]= ((1023-(float)analogRead(puerto_lectura[i]))/(float)analogRead(puerto_lectura[i]))*RL[i];     
+        //for (int j=0; j < 5; j++){
+        //    RS_filter_input[j]= ((1023-(float)analogRead(puerto_lectura[i]))/(float)analogRead(puerto_lectura[i]))*RL[i];
+        //}
+        ////pascal filter
+        //RS[i]=(RS_filter_input[0]+(4*RS_filter_input[1])+(6*RS_filter_input[2])+(4*RS_filter_input[3])+RS_filter_input[4])/16;
+        //RS[i]= ((1023-(float)analogRead(puerto_lectura[i]))/(float)analogRead(puerto_lectura[i]))*RL[i];
+        for (int i=0; i<10; i++) {
+            RS[i]=(RS_sum[i])/RS_internal_counter;
+        }
     }
-    
+    rs_filter_reseter();
+}
+
+void Enose::rs_filter_reseter(){
+    for (int i = 0; i < 10; i++)
+    {
+        RS_sum[i]=0;
+    }
+    RS_internal_counter=0;
+}
+
+void Enose::pascalFilter(){
+    float kp=0.05;
+    for (int i = 0; i < 10; i++){
+        for (int j=0; j < 5; j++){
+            RS_filter_input[j]= (((1023-(float)analogRead(puerto_lectura[i]))*kp)/(float)analogRead(puerto_lectura[i]))*RL[i];
+        }
+        //pascal filter
+        RS_sum[i]+=(RS_filter_input[0]+(4*RS_filter_input[1])+(6*RS_filter_input[2])+(4*RS_filter_input[3])+RS_filter_input[4])/16;
+    }
+    RS_internal_counter++;
 }
 
 void Enose::rsSerialWrite(){

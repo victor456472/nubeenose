@@ -30,6 +30,9 @@ class Enose {
         float RL[10];
         float RO[10] = {0,0,0,0,0,0,0,0,0,0};
         float RS[10];
+        float RS_filter_input[5];
+        float RS_sum[10] = {0,0,0,0,0,0,0,0,0,0};
+        float RS_internal_counter=0;
         float ppm[10];
         float ratio[10];
         float Matriz_m[10] = {297.57,93.076,1226.7,35.012,2205,297.57,93.076,1226.7,35.012,2205};
@@ -66,6 +69,9 @@ class Enose {
         //envia los datos por el puerto serial al HMI
         void HMIcomunication();
         void HMIcomunication(bool finalizar_recoleccion);
+        //filtrado
+        void pascalFilter();
+        void rs_filter_reseter();
 };
 
 
