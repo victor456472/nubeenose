@@ -59,7 +59,7 @@ unsigned long tiempo;
 unsigned long tiempo2;
 unsigned long tiempo3;
 
-int range_time = 60*10;
+int range_time = 60*5;
 
 byte sw=49;
 
@@ -138,7 +138,7 @@ void loop()
     activar_espera=false;
   }
   
-  if (contador>=range_time+1 && contador<=range_time*2){
+  if (contador<=range_time*2){ //contador>=range_time+1 && 
     enose1.pascalFilter();
   }
 
@@ -152,7 +152,7 @@ void loop()
     if (contador<=range_time){
       limpieza_parcial();
       ledPannel(1,0,0,0);
-      //enose1.HMIcomunication();
+      enose1.HMIcomunication();
     }
 
     if (contador>=range_time+1 && contador<=range_time*2)
