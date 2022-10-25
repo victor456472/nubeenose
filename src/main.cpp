@@ -59,7 +59,9 @@ unsigned long tiempo;
 unsigned long tiempo2;
 unsigned long tiempo3;
 
-int range_time = 60*5;
+int range_time = 30;
+int range_time1 = 30;
+int range_time2 = 60;
 
 byte sw=49;
 
@@ -138,7 +140,7 @@ void loop()
     activar_espera=false;
   }
   
-  if (contador<=range_time*2){ //contador>=range_time+1 && 
+  if (contador<=range_time+range_time1+range_time2){ //contador>=range_time+1 && 
     enose1.pascalFilter();
   }
 
@@ -150,12 +152,12 @@ void loop()
     contador++;
 
     if (contador<=range_time){
-      limpieza_parcial();
+      detener_bombas();
       ledPannel(1,0,0,0);
       enose1.HMIcomunication();
     }
 
-    if (contador>=range_time+1 && contador<=range_time*2)
+    if (contador>=range_time+1 && contador<=range_time+range_time1)
     {
       if(door6){
         enose1.pascalFilter();
@@ -166,7 +168,7 @@ void loop()
       //enose1.ppmExcelWrite();
       enose1.HMIcomunication(); 
     }
-    if (contador>=((range_time*2)+1)){
+    if (contador>=((range_time+range_time1)+1)){
       activar_espera=true;
     }
 
@@ -196,16 +198,17 @@ void loop()
       }
     }
 
-    if (contador>=((range_time*2)+1) && contador<=range_time*3){
+    if (contador>=((range_time+range_time1)+1) && contador<=(range_time+range_time1+range_time2)){
       ledPannel(0,0,0,1);
       limpieza_completa();
+      enose1.HMIcomunication();
       if(door2){
         delay(100);
         door2=false;
       }
     }
 
-    if (contador>=((range_time*3)+1)){
+    if (contador>=((range_time+range_time1+range_time2)+1)){
       ledPannel(1,1,1,1);
       detener_bombas();
     }
