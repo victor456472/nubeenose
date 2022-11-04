@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <MQlab.h>
+#include <string.h>
 
 int MQ_PIN[] = {A0, A1, A2, A3, A4, A5, A6, A7, A8, A9};
 float Lectura[10];
@@ -67,6 +68,36 @@ byte sw=49;
 
 Enose enose1(MQ_PIN, RL_MQ);
 
+
+
+bool door8=true; //se usa para hacer que el contador "tiempo=millis" se ejecute una sola vez cuando enre a modo manual 
+
+/*recepcion de datos*/
+
+String str = "";
+const char separator = ',';
+const int dataLenght = 9;
+String *buff;;
+String data[dataLenght];
+
+/* variables para la seleccion del modo de uso */
+
+String use_mode="1"; //1 si es auto y 0 si es manual
+
+/*variables para la seleccion de la secuencia*/
+String t1="c";
+String t2="a";
+String t3="b";
+
+/*variables para el control manual*/
+String ch1="o";
+String ch2="o";
+
+/*variables para ajuste de tiempos*/
+String tt1="30";
+String tt2="30";
+String tt3="60";
+
 void setup()
 {
   Serial.begin(9600);
@@ -120,10 +151,79 @@ void limpieza_completa(){
   digitalWrite(inyeccion, 1);
 }
 
-void loop()
-{
-  while (!digitalRead(sw))
+String* lectura_serial(const int l){
+  str=Serial.readStringUntil('\n');
+  for(int i=0; i<l; i++){
+    int index=str.indexOf(separator);
+    data[i]=str.substring(0,index);
+    str=str.substring(index+1);
+  }
+  return data;
+}
+
+void comprobar_puerto(){
+  if (Serial.available()){
+    buff=lectura_serial(dataLenght);
+    use_mode=buff[0];
+
+    if (buff[1]=="a" || buff[1]=="b" || buff[1]=="c" || buff[1]=="d"){
+      t1=buff[1];
+    }
+    if (buff[2]=="a" || buff[2]=="b" || buff[2]=="c" || buff[2]=="d"){
+      t2=buff[2];
+    }
+    if (buff[3]=="a" || buff[3]=="b" || buff[3]=="c" || buff[3]=="d"){
+      t3=buff[3];
+    }
+
+    ch1=buff[4];
+    ch2=buff[5];
+
+    tt1=buff[6];
+    tt2=buff[7];
+    tt3=buff[8];
+
+    if (tt1!="n"){
+      range_time=tt1.toInt();
+    }
+    if (tt2!="n"){
+      range_time1=tt2.toInt();
+    }
+    if (tt3!="n"){
+      range_time2=tt3.toInt();
+    }
+
+    Serial.println(t1);
+    Serial.println(t2);
+    Serial.println(t3);
+    Serial.println(ch1);
+    Serial.println(ch2);
+    Serial.println(range_time);
+    Serial.println(range_time1);
+    Serial.println(range_time2);
+  }
+}
+
+void seleccionar_proceso(String secuence){
+  if (secuence=="a"){
+    ledPannel(0,1,0,0);
+    inyeccion_gases();
+  }else if(secuence=="b"){
+    ledPannel(0,1,0,1);
+    limpieza_completa();
+  }else if(secuence=="c"){
+    ledPannel(1,0,0,0);
+    detener_bombas();
+  }else if(secuence=="d"){
+    ledPannel(0,0,0,1);
+    limpieza_parcial();
+  }
+}
+
+void automatic_process(){
+  while (!digitalRead(sw) && (use_mode.toInt())==1)
   {
+    comprobar_puerto();
     enose1.rs_filter_reseter();
     detener_bombas();
     ledPannel(0,0,0,0);
@@ -139,88 +239,121 @@ void loop()
     tiempo=millis();
     activar_espera=false;
   }
-  
-  if (contador<=range_time+range_time1+range_time2){ //contador>=range_time+1 && 
+  if(use_mode.toInt()==1){
+    if (contador<=range_time+range_time1+range_time2){ //contador>=range_time+1 && 
+      enose1.pascalFilter();
+    }
+
+    tiempo2=millis()-tiempo;
+
+    if (tiempo2-tiempo3 >= 1000){
+
+      tiempo3=tiempo2;
+      contador++;
+
+      if (contador<=range_time){
+        seleccionar_proceso(t1);
+        enose1.HMIcomunication();
+      }
+
+      if (contador>=range_time+1 && contador<=range_time+range_time1)
+      {
+        if(door6){
+          enose1.pascalFilter();
+          door6=false;
+        }
+        seleccionar_proceso(t2);
+        enose1.HMIcomunication(); 
+      }
+      if (contador>=((range_time+range_time1)+1)){
+        activar_espera=true;
+      }
+
+      while(activar_espera && door1 && use_mode.toInt()==1){
+        comprobar_puerto();
+        if(door4){
+          enose1.HMIcomunication(true); //la sobrecarga permite indicar el final de la recoleccion de datos
+          door4=false;
+        }
+        tiempo2 =millis()-tiempo;
+        if (tiempo2-tiempo3 >= 1000){
+          tiempo3=tiempo2;
+        }
+        ledPannel(0,0,1,0);
+        detener_bombas();
+        if (!digitalRead(sw)){
+          if(door7){
+            delay(500);
+            door7=false;
+          }
+          door0=true;
+        }
+        if (door0){
+          if (digitalRead(sw)){
+            activar_espera=false;
+            door1=false;
+          }
+        }
+      }
+      if(use_mode.toInt()==1){
+        if (contador>=((range_time+range_time1)+1) && contador<=(range_time+range_time1+range_time2)){
+          seleccionar_proceso(t3);
+          enose1.HMIcomunication();
+          if(door2){
+            delay(100);
+            door2=false;
+          }
+        }
+
+        if (contador>=((range_time+range_time1+range_time2)+1)){
+          ledPannel(1,1,1,1);
+          detener_bombas();
+        }
+      }
+    }
+
+    if(door5){
+      delay(600);
+      door5=false;
+    }
+  }
+}
+
+void loop()
+{
+  comprobar_puerto();
+  if (use_mode.toInt()==1){ 
+    automatic_process();
+  }else if (use_mode.toInt()==0){
+    ledPannel(1,0,0,1);
     enose1.pascalFilter();
-  }
-
-  tiempo2=millis()-tiempo;
-
-  if (tiempo2-tiempo3 >= 1000){
-
-    tiempo3=tiempo2;
-    contador++;
-
-    if (contador<=range_time){
-      detener_bombas();
-      ledPannel(1,0,0,0);
+    if (door8){
+      tiempo=millis();
+      door8=false;
+    }
+    tiempo2=millis()-tiempo;
+    if (tiempo2-tiempo3 >= 1000){
+      tiempo3=tiempo2;
       enose1.HMIcomunication();
     }
-
-    if (contador>=range_time+1 && contador<=range_time+range_time1)
-    {
-      if(door6){
-        enose1.pascalFilter();
-        door6=false;
+    if (ch1=="o"){
+      if (ch2=="o"){
+        ledPannel(1,0,0,1);
+        detener_bombas();
+      }else if(ch2=="i"){
+        ledPannel(1,0,1,1);
+        limpieza_parcial();
       }
-      inyeccion_gases();
-      ledPannel(0,1,0,0);
-      //enose1.ppmExcelWrite();
-      enose1.HMIcomunication(); 
-    }
-    if (contador>=((range_time+range_time1)+1)){
-      activar_espera=true;
-    }
-
-    while(activar_espera && door1){
-      if(door4){
-        enose1.HMIcomunication(true); //la sobrecarga permite indicar el final de la recoleccion de datos
-        door4=false;
+    }else if (ch1=="i"){
+      if (ch2=="o"){
+        ledPannel(1,1,0,1);
+        inyeccion_gases();
+      }else if(ch2=="i"){
+        ledPannel(1,1,1,1);
+        limpieza_completa();
       }
-      tiempo2 =millis()-tiempo;
-      if (tiempo2-tiempo3 >= 1000){
-        tiempo3=tiempo2;
-      }
-      ledPannel(0,0,1,0);
-      detener_bombas();
-      if (!digitalRead(sw)){
-        if(door7){
-          delay(500);
-          door7=false;
-        }
-        door0=true;
-      }
-      if (door0){
-        if (digitalRead(sw)){
-          activar_espera=false;
-          door1=false;
-        }
-      }
-    }
-
-    if (contador>=((range_time+range_time1)+1) && contador<=(range_time+range_time1+range_time2)){
-      ledPannel(0,0,0,1);
-      limpieza_completa();
-      enose1.HMIcomunication();
-      if(door2){
-        delay(100);
-        door2=false;
-      }
-    }
-
-    if (contador>=((range_time+range_time1+range_time2)+1)){
-      ledPannel(1,1,1,1);
-      detener_bombas();
     }
   }
-
-  if(door5){
-    delay(600);
-    door5=false;
-  }
-  //if(!digitalRead(sw) && door4!=false){
-  //  enose1.HMIcomunication(true); //la sobrecarga permite indicar el final de la recoleccion de datos
-  //}
 }
 
 
