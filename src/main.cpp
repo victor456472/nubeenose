@@ -55,6 +55,8 @@ bool door4=true;
 bool door5=true;
 bool door6=true;
 bool door7=true;
+bool door8=true; //se usa para hacer que el contador "tiempo=millis" se ejecute una sola vez cuando enre a modo manual 
+bool door9=true;
 
 unsigned long tiempo;
 unsigned long tiempo2;
@@ -70,7 +72,6 @@ Enose enose1(MQ_PIN, RL_MQ);
 
 
 
-bool door8=true; //se usa para hacer que el contador "tiempo=millis" se ejecute una sola vez cuando enre a modo manual 
 
 /*recepcion de datos*/
 
@@ -164,8 +165,9 @@ String* lectura_serial(const int l){
 void comprobar_puerto(){
   if (Serial.available()){
     buff=lectura_serial(dataLenght);
-    use_mode=buff[0];
-
+    if(buff[0]=="1" || buff[0]=="0"){
+      use_mode=buff[0];
+    }
     if (buff[1]=="a" || buff[1]=="b" || buff[1]=="c" || buff[1]=="d"){
       t1=buff[1];
     }
@@ -176,8 +178,12 @@ void comprobar_puerto(){
       t3=buff[3];
     }
 
-    ch1=buff[4];
-    ch2=buff[5];
+    if(buff[4]=="o" || buff[4]=="i"){
+      ch1=buff[4];
+    }
+    if(buff[5]=="o" || buff[5]=="i"){
+      ch2=buff[5];
+    }
 
     tt1=buff[6];
     tt2=buff[7];
@@ -193,6 +199,7 @@ void comprobar_puerto(){
       range_time2=tt3.toInt();
     }
 
+    Serial.println(use_mode);
     Serial.println(t1);
     Serial.println(t2);
     Serial.println(t3);
@@ -203,7 +210,6 @@ void comprobar_puerto(){
     Serial.println(range_time2);
   }
 }
-
 void seleccionar_proceso(String secuence){
   if (secuence=="a"){
     ledPannel(0,1,0,0);
@@ -221,7 +227,7 @@ void seleccionar_proceso(String secuence){
 }
 
 void automatic_process(){
-  while (!digitalRead(sw) && (use_mode.toInt())==1)
+  while (!digitalRead(sw) && (use_mode)=="1")
   {
     comprobar_puerto();
     enose1.rs_filter_reseter();
@@ -239,7 +245,7 @@ void automatic_process(){
     tiempo=millis();
     activar_espera=false;
   }
-  if(use_mode.toInt()==1){
+  if(use_mode=="1"){
     if (contador<=range_time+range_time1+range_time2){ //contador>=range_time+1 && 
       enose1.pascalFilter();
     }
@@ -269,7 +275,7 @@ void automatic_process(){
         activar_espera=true;
       }
 
-      while(activar_espera && door1 && use_mode.toInt()==1){
+      while(activar_espera && door1 && use_mode=="1"){
         comprobar_puerto();
         if(door4){
           enose1.HMIcomunication(true); //la sobrecarga permite indicar el final de la recoleccion de datos
@@ -295,7 +301,7 @@ void automatic_process(){
           }
         }
       }
-      if(use_mode.toInt()==1){
+      if(use_mode=="1"){
         if (contador>=((range_time+range_time1)+1) && contador<=(range_time+range_time1+range_time2)){
           seleccionar_proceso(t3);
           enose1.HMIcomunication();
@@ -322,10 +328,14 @@ void automatic_process(){
 void loop()
 {
   comprobar_puerto();
-  if (use_mode.toInt()==1){ 
+  if (use_mode=="1"){ 
     automatic_process();
-  }else if (use_mode.toInt()==0){
-    ledPannel(1,0,0,1);
+    door9=true;
+  }else if (use_mode=="0"){
+    if(door9){
+      ledPannel(1,0,0,1);
+      door9=false;
+    }
     enose1.pascalFilter();
     if (door8){
       tiempo=millis();
