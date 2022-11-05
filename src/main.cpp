@@ -210,6 +210,7 @@ void comprobar_puerto(){
     Serial.println(range_time2);
   }
 }
+
 void seleccionar_proceso(String secuence){
   if (secuence=="a"){
     ledPannel(0,1,0,0);
@@ -365,5 +366,3 @@ void loop()
     }
   }
 }
-
-
