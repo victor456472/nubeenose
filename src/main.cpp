@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include <MQlab.h>
 #include <string.h>
+#include <DHT.h>
+#include <DHT_U.h>
 
 int MQ_PIN[] = {A0, A1, A2, A3, A4, A5, A6, A7, A8, A9};
 float Lectura[10];
@@ -66,12 +68,12 @@ int range_time = 30;
 int range_time1 = 30;
 int range_time2 = 60;
 
+int dht_pin = 5;
+
 byte sw=49;
 
 Enose enose1(MQ_PIN, RL_MQ);
-
-
-
+DHT dht(dht_pin, DHT11);
 
 /*recepcion de datos*/
 
@@ -99,6 +101,10 @@ String tt1="30";
 String tt2="30";
 String tt3="60";
 
+/*variables para guardar temperatura y humedad*/
+float temperatura;
+float humedad;
+
 void setup()
 {
   Serial.begin(9600);
@@ -121,7 +127,7 @@ void setup()
   tiempo=0;
   tiempo2=0;
   tiempo3=0;
-
+  dht.begin();
   enose1.manualCalibration(Ro);
 }
 
@@ -227,6 +233,16 @@ void seleccionar_proceso(String secuence){
   }
 }
 
+void enviar_datos_sensores(){
+  temperatura=dht.readTemperature();
+  humedad=dht.readHumidity();
+  enose1.HMIcomunication();
+  Serial.print(",");
+  Serial.print(temperatura);
+  Serial.print(",");
+  Serial.println(humedad);
+}
+
 void automatic_process(){
   while (!digitalRead(sw) && (use_mode)=="1")
   {
@@ -260,7 +276,7 @@ void automatic_process(){
 
       if (contador<=range_time){
         seleccionar_proceso(t1);
-        enose1.HMIcomunication();
+        enviar_datos_sensores();
       }
 
       if (contador>=range_time+1 && contador<=range_time+range_time1)
@@ -270,7 +286,7 @@ void automatic_process(){
           door6=false;
         }
         seleccionar_proceso(t2);
-        enose1.HMIcomunication(); 
+        enviar_datos_sensores(); 
       }
       if (contador>=((range_time+range_time1)+1)){
         activar_espera=true;
@@ -280,6 +296,7 @@ void automatic_process(){
         comprobar_puerto();
         if(door4){
           enose1.HMIcomunication(true); //la sobrecarga permite indicar el final de la recoleccion de datos
+          Serial.println("0,0");
           door4=false;
         }
         tiempo2 =millis()-tiempo;
@@ -305,7 +322,7 @@ void automatic_process(){
       if(use_mode=="1"){
         if (contador>=((range_time+range_time1)+1) && contador<=(range_time+range_time1+range_time2)){
           seleccionar_proceso(t3);
-          enose1.HMIcomunication();
+          enviar_datos_sensores();
           if(door2){
             delay(100);
             door2=false;
@@ -345,7 +362,7 @@ void loop()
     tiempo2=millis()-tiempo;
     if (tiempo2-tiempo3 >= 1000){
       tiempo3=tiempo2;
-      enose1.HMIcomunication();
+      enviar_datos_sensores();
     }
     if (ch1=="o"){
       if (ch2=="o"){

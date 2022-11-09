@@ -2,6 +2,7 @@
 #include "MQLab.h"
 
 Enose::Enose(int puerto_analogico[10], float Rl[10]){
+
     //pines analogicos
     this->pinA = puerto_analogico[0];
     this->pinB = puerto_analogico[1];
@@ -233,20 +234,20 @@ void Enose::HMIcomunication(){
         Serial.print(ppm[i]);
         Serial.print(",");
     }
-    Serial.println(0);
+    Serial.print(0);
 }
 void Enose::HMIcomunication(bool finalizar_recoleccion){
     if(finalizar_recoleccion){
         for (int i = 0; i <= 9; i++){
             Serial.print("0,");
         }
-        Serial.println(1);
+        Serial.print(1);
     }else{
         ppmGet();
         for(int i=0; i<=9; i++){
             Serial.print(ppm[i]);
             Serial.print(",");
         }
-        Serial.println(0);
+        Serial.print(0);
     }
 }

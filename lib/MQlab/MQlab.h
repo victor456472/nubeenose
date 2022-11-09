@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 
+
 class Enose {
     private:
         int pinA;
@@ -37,7 +38,6 @@ class Enose {
         float ratio[10];
         float Matriz_m[10] = {297.57,93.076,1226.7,35.012,2205,297.57,93.076,1226.7,35.012,2205};
         float Matriz_b[10] = {-1.481,-1.534,-4.257,-3.378,-2.507,-1.481,-1.534,-4.257,-3.378,-2.507};
-
         void assignArray();
         void rsGet();
         void ratioGet();
