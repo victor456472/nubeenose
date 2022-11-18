@@ -217,18 +217,26 @@ void comprobar_puerto(){
   }
 }
 
-void seleccionar_proceso(String secuence){
+void seleccionar_proceso(String secuence, bool ledActivation=true){
   if (secuence=="a"){
-    ledPannel(0,1,0,0);
+    if (ledActivation){
+      ledPannel(0,1,0,0);
+    }
     inyeccion_gases();
   }else if(secuence=="b"){
-    ledPannel(0,1,0,1);
+    if (ledActivation){
+      ledPannel(0,1,0,1);
+    }
     limpieza_completa();
   }else if(secuence=="c"){
-    ledPannel(1,0,0,0);
+    if (ledActivation){
+      ledPannel(1,0,0,0);
+    }
     detener_bombas();
   }else if(secuence=="d"){
+    if (ledActivation){
     ledPannel(0,0,0,1);
+    }
     limpieza_parcial();
   }
 }
@@ -285,14 +293,14 @@ void automatic_process(){
           enose1.pascalFilter();
           door6=false;
         }
-        seleccionar_proceso(t2);
+        seleccionar_proceso(t2,false);
         enviar_datos_sensores(); 
       }
       if (contador>=((range_time+range_time1)+1)){
         activar_espera=true;
       }
 
-      while(activar_espera && door1 && use_mode=="1"){
+/*       while(activar_espera && door1 && use_mode=="1"){
         comprobar_puerto();
         if(door4){
           enose1.HMIcomunication(true); //la sobrecarga permite indicar el final de la recoleccion de datos
@@ -318,22 +326,27 @@ void automatic_process(){
             door1=false;
           }
         }
-      }
-      if(use_mode=="1"){
-        if (contador>=((range_time+range_time1)+1) && contador<=(range_time+range_time1+range_time2)){
-          seleccionar_proceso(t3);
-          enviar_datos_sensores();
-          if(door2){
-            delay(100);
-            door2=false;
-          }
-        }
+      } */
+//      if(use_mode=="1"){
+        // if (contador>=((range_time+range_time1)+1) && contador<=(range_time+range_time1+range_time2)){
+        //   seleccionar_proceso(t3);
+        //   enviar_datos_sensores();
+        //   if(door2){
+        //     delay(100);
+        //     door2=false;
+        //   }
+        // }
 
-        if (contador>=((range_time+range_time1+range_time2)+1)){
+        if (contador>=((range_time+range_time1)+1)){
+          if(door4){
+            enose1.HMIcomunication(true); //la sobrecarga permite indicar el final de la recoleccion de datos
+            Serial.println(",0,0");
+            door4=false;
+          }
           ledPannel(1,1,1,1);
-          detener_bombas();
+          seleccionar_proceso(t3);
         }
-      }
+      //}
     }
 
     if(door5){
