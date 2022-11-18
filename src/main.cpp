@@ -296,7 +296,7 @@ void automatic_process(){
         comprobar_puerto();
         if(door4){
           enose1.HMIcomunication(true); //la sobrecarga permite indicar el final de la recoleccion de datos
-          Serial.println("0,0");
+          Serial.println(",0,0");
           door4=false;
         }
         tiempo2 =millis()-tiempo;
