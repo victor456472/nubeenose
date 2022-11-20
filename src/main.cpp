@@ -256,7 +256,7 @@ void automatic_process(){
   {
     comprobar_puerto();
     enose1.rs_filter_reseter();
-    detener_bombas();
+    limpieza_completa();
     ledPannel(0,0,0,0);
     door1=true;
     door0=false;
@@ -271,6 +271,7 @@ void automatic_process(){
     activar_espera=false;
   }
   if(use_mode=="1"){
+    //comprobar_puerto();
     if (contador<=range_time+range_time1+range_time2){ //contador>=range_time+1 && 
       enose1.pascalFilter();
     }
@@ -293,13 +294,13 @@ void automatic_process(){
           enose1.pascalFilter();
           door6=false;
         }
-        seleccionar_proceso(t2,false);
+        seleccionar_proceso(t2);
         enviar_datos_sensores(); 
       }
-      if (contador>=((range_time+range_time1)+1)){
+/*       if (contador>=((range_time+range_time1)+1)){
         activar_espera=true;
       }
-
+ */
 /*       while(activar_espera && door1 && use_mode=="1"){
         comprobar_puerto();
         if(door4){
@@ -344,7 +345,7 @@ void automatic_process(){
             door4=false;
           }
           ledPannel(1,1,1,1);
-          seleccionar_proceso(t3);
+          seleccionar_proceso(t3, false);
         }
       //}
     }
