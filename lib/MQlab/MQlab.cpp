@@ -196,12 +196,13 @@ void Enose::roSerialPlot(){
     Serial.println(RS[9]/factor_aire_limpio[9]);
 }
 
-void Enose::ppmGet(){
+float* Enose::ppmGet(){
     ratioGet();
     for (int i = 0; i < 10; i++)
     {
         ppm[i]=Matriz_m[i]*pow(ratio[i],Matriz_b[i]);
     }
+    return ppm;
 }
 
 void Enose::ppmSerialPlot(){
@@ -228,15 +229,16 @@ void Enose::ppmExcelWrite(){
 
 }
 
-void Enose::HMIcomunication(){
+float* Enose::HMIcomunication(){
     ppmGet();
     for(int i=0; i<=9; i++){
         Serial.print(ppm[i]);
         Serial.print(",");
     }
     Serial.print(0);
+    return ppm;
 }
-void Enose::HMIcomunication(bool finalizar_recoleccion){
+float* Enose::HMIcomunication(bool finalizar_recoleccion){
     if(finalizar_recoleccion){
         for (int i = 0; i <= 9; i++){
             Serial.print("0,");

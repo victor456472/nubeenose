@@ -105,6 +105,12 @@ String tt3="60";
 float temperatura;
 float humedad;
 
+/*variable para comparar linea base*/
+const float base_line_alc=16;
+
+/*variable para almacenar ppm values*/
+float *ppm;;
+
 void setup()
 {
   Serial.begin(9600);
@@ -252,12 +258,13 @@ void enviar_datos_sensores(){
 }
 
 void automatic_process(){
+  unsigned long initial_time=millis();
+  unsigned long initial_time3=0;
   while (!digitalRead(sw) && (use_mode)=="1")
   {
     comprobar_puerto();
     enose1.rs_filter_reseter();
-    limpieza_completa();
-    ledPannel(0,0,0,0);
+    seleccionar_proceso(t1,false);
     door1=true;
     door0=false;
     door2=true;
@@ -268,6 +275,24 @@ void automatic_process(){
     tiempo3=0;
     contador=0;
     tiempo=millis();
+    unsigned long initial_time2=millis()-initial_time;
+    enose1.pascalFilter();
+    if(initial_time2-initial_time3 >= 1000){
+      initial_time3=initial_time2;
+      //enviar_datos_sensores();
+      temperatura=dht.readTemperature();
+      humedad=dht.readHumidity();
+      ppm=enose1.HMIcomunication();
+      Serial.print(",");
+      Serial.print(temperatura);
+      Serial.print(",");
+      Serial.println(humedad);
+    }
+    if(round(ppm[0]) <= 16){
+      ledPannel(1,0,0,0);
+    }else{
+      ledPannel(0,0,0,0);
+    }
     activar_espera=false;
   }
   if(use_mode=="1"){
@@ -283,62 +308,22 @@ void automatic_process(){
       tiempo3=tiempo2;
       contador++;
 
-      if (contador<=range_time){
+/*       if (contador<=range_time){
         seleccionar_proceso(t1);
         enviar_datos_sensores();
-      }
+      } */
 
-      if (contador>=range_time+1 && contador<=range_time+range_time1)
+      if (contador<=range_time1)
       {
-        if(door6){
+/*         if(door6){
           enose1.pascalFilter();
           door6=false;
-        }
+        } */
         seleccionar_proceso(t2);
         enviar_datos_sensores(); 
       }
-/*       if (contador>=((range_time+range_time1)+1)){
-        activar_espera=true;
-      }
- */
-/*       while(activar_espera && door1 && use_mode=="1"){
-        comprobar_puerto();
-        if(door4){
-          enose1.HMIcomunication(true); //la sobrecarga permite indicar el final de la recoleccion de datos
-          Serial.println(",0,0");
-          door4=false;
-        }
-        tiempo2 =millis()-tiempo;
-        if (tiempo2-tiempo3 >= 1000){
-          tiempo3=tiempo2;
-        }
-        ledPannel(0,0,1,0);
-        detener_bombas();
-        if (!digitalRead(sw)){
-          if(door7){
-            delay(500);
-            door7=false;
-          }
-          door0=true;
-        }
-        if (door0){
-          if (digitalRead(sw)){
-            activar_espera=false;
-            door1=false;
-          }
-        }
-      } */
-//      if(use_mode=="1"){
-        // if (contador>=((range_time+range_time1)+1) && contador<=(range_time+range_time1+range_time2)){
-        //   seleccionar_proceso(t3);
-        //   enviar_datos_sensores();
-        //   if(door2){
-        //     delay(100);
-        //     door2=false;
-        //   }
-        // }
 
-        if (contador>=((range_time+range_time1)+1)){
+        if (contador>=(range_time1+1)){
           if(door4){
             enose1.HMIcomunication(true); //la sobrecarga permite indicar el final de la recoleccion de datos
             Serial.println(",0,0");

@@ -41,10 +41,10 @@ class Enose {
         void assignArray();
         void rsGet();
         void ratioGet();
-        void ppmGet();
 
     public:
         int variable=3;
+        float* ppmGet();
         Enose(int puerto_lectura[10], float RL[10]);
         //calibra de manera automatica el valor de Ro de los sensores MQ y los imprime en el monitor serie. 
         void serialWriteAutoCalibration(int muestras);
@@ -67,8 +67,8 @@ class Enose {
         //grafica en el Serial plotter los datos leidos por la Enose
         void ppmSerialPlot();
         //envia los datos por el puerto serial al HMI
-        void HMIcomunication();
-        void HMIcomunication(bool finalizar_recoleccion);
+        float* HMIcomunication();
+        float* HMIcomunication(bool finalizar_recoleccion);
         //filtrado
         void pascalFilter();
         void rs_filter_reseter();
