@@ -8,8 +8,8 @@ asesoria del ingeniero Kelvin Beleño.
 en este hay tres archivos importantes:<br>
 |<br>
 |<br>
-|__src<br>
-|  |<br>
+|___src<br>
+|   |<br>
 |  |<br>
 |  |__main.cpp      <---archivo #1<br>
 |<br>
