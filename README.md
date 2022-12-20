@@ -6,24 +6,24 @@ olfato electronico desarrollado por los estudiantes Samir Parra y Victor Vargas 
 asesoria del ingeniero Kelvin Beleño.
 
 en este hay tres archivos importantes:<br>
-|
-|
-|__src
-|  |
-|  |
-|  |__main.cpp      <---archivo #1
-|
-|__lib
-|  |
-|  |__Adafruit_Sensor-master
-|  |
-|  |__DHT_sensor_library-1.4.4
-|  |
-|  |__MQlab
-|     |
-|     |__MQlab.cpp  <---archivo #2
-|     |
-|     |__MQlab.h    <---archivo #3
+|<br>
+|<br>
+|__src<br>
+|  |<br>
+|  |<br>
+|  |__main.cpp      <---archivo #1<br>
+|<br>
+|__lib<br>
+|  |<br>
+|  |__Adafruit_Sensor-master<br>
+|  |<br>
+|  |__DHT_sensor_library-1.4.4<br>
+|  |<br>
+|  |__MQlab<br>
+|     |<br>
+|     |__MQlab.cpp  <---archivo #2<br>
+|     |<br>
+|     |__MQlab.h    <---archivo #3<br>
 
 
 el archivo #1 es el codigo principal que se carga al controlador.
