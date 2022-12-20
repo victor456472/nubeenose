@@ -4,7 +4,7 @@ descripcion
 
 el presente repositorio guarda el codigo fuente del programa cargado en el
 olfato electronico desarrollado por los estudiantes Samir Parra y Victor Vargas en
-asesoria del ingeniero Kelvin Beleño.
+asesoria del ingeniero Kelvin Beleño. h
 
 |--lib
 |  |
