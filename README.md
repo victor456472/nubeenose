@@ -6,7 +6,7 @@ el presente repositorio guarda el codigo fuente del programa cargado en el
 olfato electronico desarrollado por los estudiantes Samir Parra y Victor Vargas en
 asesoria del ingeniero Kelvin Beleño.
 
-en este hay tres archivos importantes:<br>
+en este hay tres archivos importantes:
 |
 |
 |--src
