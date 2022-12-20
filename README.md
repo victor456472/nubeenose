@@ -1,6 +1,7 @@
-# nubeenose
+nubeenose
 
-<h1>descripcion</h1>
+descripcion
+
 el presente repositorio guarda el codigo fuente del programa cargado en el
 olfato electronico desarrollado por los estudiantes Samir Parra y Victor Vargas en
 asesoria del ingeniero Kelvin Beleño.
@@ -13,17 +14,17 @@ en este hay tres archivos importantes:<br>
 |  |
 |  |--main.cpp      <---archivo #1<br>
 |
-|__lib<br>
-|  |<br>
-|  |__Adafruit_Sensor-master<br>
-|  |<br>
-|  |__DHT_sensor_library-1.4.4<br>
-|  |<br>
-|  |__MQlab<br>
-|     |<br>
-|     |__MQlab.cpp  <---archivo #2<br>
-|     |<br>
-|     |__MQlab.h    <---archivo #3<br>
+|__lib
+|  |
+|  |__Adafruit_Sensor-master
+|  |
+|  |__DHT_sensor_library-1.4.4
+|  |
+|  |__MQlab
+|     |
+|     |__MQlab.cpp  <---archivo #2
+|     |
+|     |__MQlab.h    <---archivo #3
 
 
 el archivo #1 es el codigo principal que se carga al controlador.
