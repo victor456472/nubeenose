@@ -6,25 +6,25 @@ el presente repositorio guarda el codigo fuente del programa cargado en el
 olfato electronico desarrollado por los estudiantes Samir Parra y Victor Vargas en
 asesoria del ingeniero Kelvin Beleño.
 
-en este hay tres archivos importantes:
+|--lib
+|  |
+|  |--Bar
+|  |  |--docs
+|  |  |--examples
+|  |  |--src
+|  |     |- Bar.c
+|  |     |- Bar.h
+|  |  |- library.json (optional, custom build options, etc) https://docs.platformio.org/page/librarymanager/config.html
+|  |
+|  |--Foo
+|  |  |- Foo.c
+|  |  |- Foo.h
+|  |
+|  |- README --> THIS FILE
 |
-|
+|- platformio.ini
 |--src
-|  |
-|  |
-|  |--main.cpp      <---archivo #1<br>
-|
-|__lib
-|  |
-|  |__Adafruit_Sensor-master
-|  |
-|  |__DHT_sensor_library-1.4.4
-|  |
-|  |__MQlab
-|     |
-|     |__MQlab.cpp  <---archivo #2
-|     |
-|     |__MQlab.h    <---archivo #3
+   |- main.c
 
 
 el archivo #1 es el codigo principal que se carga al controlador.
