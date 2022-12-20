@@ -6,13 +6,13 @@ olfato electronico desarrollado por los estudiantes Samir Parra y Victor Vargas 
 asesoria del ingeniero Kelvin Beleño.
 
 en este hay tres archivos importantes:<br>
-|<br>
-|<br>
-|___src<br>
-|  |<br>
-|  |<br>
-|  |__main.cpp      <---archivo #1<br>
-|<br>
+|
+|
+|--src
+|  |
+|  |
+|  |--main.cpp      <---archivo #1<br>
+|
 |__lib<br>
 |  |<br>
 |  |__Adafruit_Sensor-master<br>
