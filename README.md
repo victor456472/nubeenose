@@ -9,7 +9,7 @@ en este hay tres archivos importantes:<br>
 |<br>
 |<br>
 |___src<br>
-|   |<br>
+|\t\t|<br>
 |  |<br>
 |  |__main.cpp      <---archivo #1<br>
 |<br>
