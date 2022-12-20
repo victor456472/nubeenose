@@ -1,6 +1,6 @@
 # nubeenose
 
-##descripcion
+<h1>descripcion</h1>
 el presente repositorio guarda el codigo fuente del programa cargado en el
 olfato electronico desarrollado por los estudiantes Samir Parra y Victor Vargas en
 asesoria del ingeniero Kelvin Beleño.
@@ -9,7 +9,7 @@ en este hay tres archivos importantes:<br>
 |<br>
 |<br>
 |___src<br>
-|\t\t|<br>
+|  |<br>
 |  |<br>
 |  |__main.cpp      <---archivo #1<br>
 |<br>
